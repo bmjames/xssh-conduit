@@ -14,7 +14,7 @@ cabal-version:       >=1.10
 
 executable xssh-conduit
   main-is:             xssh-conduit.hs
-  build-depends:       base >=4.7 && <4.8
+  build-depends:       base >=4.6 && <4.8
                      , bytestring
                      , stm
                      , resourcet >=1.1 && <1.2
