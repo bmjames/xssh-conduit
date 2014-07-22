@@ -4,13 +4,13 @@ module Main where
 
 import Prelude hiding (foldr)
 
-import Control.Concurrent     (forkIO)
 import Control.Concurrent.STM (atomically)
+import Control.Monad          (void)
 import Control.Monad.Trans.Resource
 
 import Data.ByteString (ByteString)
 import Data.Conduit
-import Data.Conduit.Process
+import Data.Conduit.Process (sourceCmd)
 import Data.Conduit.TMChan
 import Data.Foldable (foldr)
 
@@ -77,7 +77,7 @@ main = do
   Opts u os c hs <- execParser $ info (helper <*> options) fullDesc
   chan <- atomically $ newTBMChan 16
   let sources = map (\h -> ssh' u h c os) hs
-  merged <- runResourceT $ mergeSources sources 16
-  _ <- forkIO . runResourceT $
-    merged $$ dispLine =$ sinkTBMChan chan True
-  runResourceT $ sourceTBMChan chan $$ Conduit.stdout
+  runResourceT $ do
+    merged <- mergeSources sources 16
+    void . resourceForkIO $ merged $$ dispLine =$ sinkTBMChan chan True
+    sourceTBMChan chan $$ Conduit.stdout
