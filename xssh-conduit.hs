@@ -30,8 +30,8 @@ data Options = Opts (Maybe UName) [SSHOpt] Cmds [HostName] deriving Show
 
 options :: Parser Options
 options = Opts
-  <$> optional (strOption ( long "user"
-                         <> short 'u'
+  <$> optional (strOption ( long "login"
+                         <> short 'l'
                          <> metavar "USERNAME" 
                          <> help "Username for ssh"))
   <*> liftA2 (++)
